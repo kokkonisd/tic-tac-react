@@ -86,23 +86,25 @@ class Game extends React.Component {
     const squares = current.squares.slice();
 
     // if the game has ended no clicks should be possible
-    if (calculateWinner(squares, this.state.stepNumber)
-      || squares[i]
-      || this.state.stepNumber === 9) {
-
+    if (calculateWinner(squares) || squares[i]) {
       return;
     }
 
+    // set the square to be an X or an O depending on the xIsNext variable
     squares[i] = this.state.xIsNext ? 'X' : 'O';
+    // update the state
     this.setState({
+      // add a new history state to history
       history: history.concat([{
         squares: squares,
       }]),
+      // update the state number and xIsNext
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
     });
   }
 
+  // function to jump to a certain state
   jumpTo (step)
   {
     this.setState({
@@ -111,11 +113,12 @@ class Game extends React.Component {
     });
   }
 
+  // render function
   render ()
   {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares, this.state.stepNumber);
+    const winner = calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
       const desc = move ?
@@ -153,8 +156,10 @@ class Game extends React.Component {
   }
 }
 
-function calculateWinner (squares, steps)
+// function to calculate the winner
+function calculateWinner (squares)
 {
+  // win states
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -166,6 +171,7 @@ function calculateWinner (squares, steps)
     [2, 4, 6],
   ];
 
+  // check if any of the win states is true
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[b] === squares[c]) {
@@ -173,11 +179,17 @@ function calculateWinner (squares, steps)
     }
   }
 
-  if (steps === 9) {
-    return "None. It's a draw.";
+  // if all squares are filled in and no win state is matched
+  for (let i = 0; i < squares.length; i++) {
+    if (squares[i] === null) {
+      // game has not yet ended
+      return null;
+    }
   }
 
-  return null;
+  // otherwise it's a draw
+  return "None. It's a draw.";
+
 }
 
 // ========================================
