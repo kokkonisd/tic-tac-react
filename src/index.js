@@ -1,8 +1,8 @@
 /*
  * Simple tic-tac-toe clone built with React.
  * TODO s:
- * 3. Add a toggle button that lets you sort the moves in either ascending or descending order.
- * 4. When someone wins, highlight the three squares that caused the win.
+ * 1. Add a toggle button that lets you sort the moves in either ascending or descending order.
+ * 2. When someone wins, highlight the three squares that caused the win.
 */
 
 // import React and the css file
