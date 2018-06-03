@@ -1,8 +1,6 @@
 /*
  * Simple tic-tac-toe clone built with React.
  * TODO s:
- * 1. Display the location for each move in the format (col, row) in the move history list.
- * 2. Bold the currently selected item in the move list.
  * 3. Add a toggle button that lets you sort the moves in either ascending or descending order.
  * 4. When someone wins, highlight the three squares that caused the win.
 */
@@ -97,6 +95,8 @@ class Game extends React.Component {
       // add a new history state to history
       history: history.concat([{
         squares: squares,
+        row: Math.floor(i / 3) + 1,
+        col: i % 3 + 1,
       }]),
       // update the state number and xIsNext
       stepNumber: history.length,
@@ -122,14 +122,18 @@ class Game extends React.Component {
 
     const moves = history.map((step, move) => {
       const desc = move ?
-        "Go to move #" + move :
+        "Go to move #" + move + " ([" + step.row + ", " + step.col + "])" :
         "Go to game start";
 
-      return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
-        </li>
-      );
+      // current move is bold
+      let btn;
+      if (move === this.state.stepNumber) {
+        btn = <button onClick={() => this.jumpTo(move)}><b>{desc}</b></button>;
+      } else {
+        btn = <button onClick={() => this.jumpTo(move)}>{desc}</button>;
+      }
+
+      return <li key={move}>{btn}</li>
     });
 
     let status;
