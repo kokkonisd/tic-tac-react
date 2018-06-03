@@ -1,7 +1,5 @@
 /*
  * Simple tic-tac-toe clone built with React.
- * TODO s:
- * 1. When someone wins, highlight the three squares that caused the win.
 */
 
 // import React and the css file
@@ -14,7 +12,7 @@ function Square (props)
 {
   return (
     // return a button with the click handler passed on from the parent
-    <button className="square" onClick={props.onClick}>
+    <button className={"square " + props.color} onClick={props.onClick}>
       {props.value}
     </button>
   );
@@ -24,13 +22,14 @@ function Square (props)
 /* Board (normal React component) */
 class Board extends React.Component {
   // function to render a single square
-  renderSquare (i)
+  renderSquare (i, win)
   {
     return (
       <Square
         key={"square" + i}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
+        color={win}
       />
     );
   }
@@ -38,11 +37,17 @@ class Board extends React.Component {
   // render function
   render ()
   {
+    let count = 0;
     let rows = [];
     for (let i = 0; i < 3; i++) {
       let squares = [];
       for (let j = 0; j < 3; j++) {
-        squares.push(this.renderSquare(3 * i + j));
+        let color = null;
+        if (this.props.win[count] === 3 * i + j) {
+          color = "win";
+          count++;
+        }
+        squares.push(this.renderSquare(3 * i + j, color));
       }
       rows.push(<div className="board-row" key={"row" + i}>{squares}</div>);
     }
@@ -65,6 +70,8 @@ class Game extends React.Component {
       history: [{
         squares: Array(9).fill(null),
       }],
+      // no winning combination by default
+      win: Array(3).fill(null),
       // history is not reversed by default
       reverseHistory: false,
       // step count starts at 0
@@ -85,7 +92,7 @@ class Game extends React.Component {
     const squares = current.squares.slice();
 
     // if the game has ended no clicks should be possible
-    if (calculateWinner(squares) || squares[i]) {
+    if (calculateWinner(squares).winner || squares[i]) {
       return;
     }
 
@@ -99,6 +106,8 @@ class Game extends React.Component {
         row: Math.floor(i / 3) + 1,
         col: i % 3 + 1,
       }]),
+      // update win state
+      win: calculateWinner(squares).color,
       // update the state number and xIsNext
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
@@ -108,9 +117,15 @@ class Game extends React.Component {
   // function to jump to a certain state
   jumpTo (step)
   {
+    // get history up to step
+    const history = this.state.history.slice(0, step + 1);
+    // get the squares on step
+    const squares = history[history.length - 1].squares.slice();
+    // update state
     this.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0,
+      win: calculateWinner(squares).color,
     });
   }
 
@@ -119,7 +134,7 @@ class Game extends React.Component {
   {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const endgame = calculateWinner(current.squares);
 
     // reverse the history if specified
     const historyToMoves = this.state.reverseHistory ?
@@ -145,8 +160,11 @@ class Game extends React.Component {
     });
 
     let status;
-    if (winner) {
-      status = 'Winner: ' + winner;
+    if (endgame.winner) {
+      status = 'Winner: ' + endgame.winner;
+      if (endgame.color) {
+        current.squares.win = endgame.color;
+      }
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
@@ -156,15 +174,16 @@ class Game extends React.Component {
         <div className="game-board">
           <Board
             squares={current.squares}
+            win={this.state.win}
             onClick={(i) => this.handleClick(i)}
           />
-        </div>
-        <div className="game-info">
-          <div>{status}</div>
-          <br/>
+          <br />
           <button onClick={() => this.setState({reverseHistory: !this.state.reverseHistory})}>
             Reverse history order
           </button>
+        </div>
+        <div className="game-info">
+          <div>{status}</div>
           <ol>{moves}</ol>
         </div>
       </div>
@@ -191,7 +210,7 @@ function calculateWinner (squares)
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[b] === squares[c]) {
-      return squares[a];
+      return { winner: squares[a], color: [a, b, c] };
     }
   }
 
@@ -199,12 +218,12 @@ function calculateWinner (squares)
   for (let i = 0; i < squares.length; i++) {
     if (squares[i] === null) {
       // game has not yet ended
-      return null;
+      return { winner: null, color: Array(3).fill(null) };
     }
   }
 
   // otherwise it's a draw
-  return "None. It's a draw.";
+  return { winner: "None. It's a draw.", color: Array(3).fill(null) };
 
 }
 

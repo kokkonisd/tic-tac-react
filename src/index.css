@@ -48,3 +48,7 @@ ol, ul {
 .game-info {
   margin-left: 20px;
 }
+
+.win {
+  background-color: rgba(200, 0, 0, 0.4);
+}
