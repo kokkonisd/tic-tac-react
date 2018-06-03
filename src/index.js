@@ -5,7 +5,6 @@
  * 2. Bold the currently selected item in the move list.
  * 3. Add a toggle button that lets you sort the moves in either ascending or descending order.
  * 4. When someone wins, highlight the three squares that caused the win.
- * 5. When no one wins, display a message about the result being a draw.
 */
 
 // import React and the css file
@@ -56,26 +55,41 @@ class Board extends React.Component {
 }
 
 
+/* Game (normal React component) */
 class Game extends React.Component {
+  // class constructor
   constructor (props)
   {
+    // super call
     super(props);
+    // state initialization
     this.state = {
+      // fill the history with an empty board
       history: [{
         squares: Array(9).fill(null),
       }],
+      // step count starts at 0
       stepNumber: 0,
+      // X goes first
       xIsNext: true,
     }
   }
 
+  // click handler for the squares
   handleClick (i)
   {
+    // get all the history up until the most recent move
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
+    // get the current state of the board
     const current = history[history.length - 1];
+    // get the squares
     const squares = current.squares.slice();
 
-    if (calculateWinner(squares) || squares[i]) {
+    // if the game has ended no clicks should be possible
+    if (calculateWinner(squares, this.state.stepNumber)
+      || squares[i]
+      || this.state.stepNumber === 9) {
+
       return;
     }
 
@@ -101,7 +115,7 @@ class Game extends React.Component {
   {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const winner = calculateWinner(current.squares, this.state.stepNumber);
 
     const moves = history.map((step, move) => {
       const desc = move ?
@@ -139,7 +153,7 @@ class Game extends React.Component {
   }
 }
 
-function calculateWinner (squares)
+function calculateWinner (squares, steps)
 {
   const lines = [
     [0, 1, 2],
@@ -157,6 +171,10 @@ function calculateWinner (squares)
     if (squares[a] && squares[a] === squares[b] && squares[b] === squares[c]) {
       return squares[a];
     }
+  }
+
+  if (steps === 9) {
+    return "None. It's a draw.";
   }
 
   return null;
