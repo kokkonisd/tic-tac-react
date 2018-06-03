@@ -1,8 +1,7 @@
 /*
  * Simple tic-tac-toe clone built with React.
  * TODO s:
- * 1. Add a toggle button that lets you sort the moves in either ascending or descending order.
- * 2. When someone wins, highlight the three squares that caused the win.
+ * 1. When someone wins, highlight the three squares that caused the win.
 */
 
 // import React and the css file
@@ -66,6 +65,8 @@ class Game extends React.Component {
       history: [{
         squares: Array(9).fill(null),
       }],
+      // history is not reversed by default
+      reverseHistory: false,
       // step count starts at 0
       stepNumber: 0,
       // X goes first
@@ -120,7 +121,14 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
-    const moves = history.map((step, move) => {
+    // reverse the history if specified
+    const historyToMoves = this.state.reverseHistory ?
+      history.slice(0).reverse() : history.slice(0);
+
+    const moves = historyToMoves.map((step, move) => {
+      // reverse the move numbers if specified
+      move = this.state.reverseHistory ? history.length - move - 1 : move;
+      // get move description
       const desc = move ?
         "Go to move #" + move + " ([" + step.row + ", " + step.col + "])" :
         "Go to game start";
@@ -153,6 +161,10 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
+          <br/>
+          <button onClick={() => this.setState({reverseHistory: !this.state.reverseHistory})}>
+            Reverse history order
+          </button>
           <ol>{moves}</ol>
         </div>
       </div>
