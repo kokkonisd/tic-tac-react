@@ -12,9 +12,11 @@ function Square (props)
 {
   return (
     // return a button with the click handler passed on from the parent
+    <td>
     <button className={"square " + props.color} onClick={props.onClick}>
       {props.value}
     </button>
+    </td>
   );
 }
 
@@ -49,10 +51,10 @@ class Board extends React.Component {
         }
         squares.push(this.renderSquare(3 * i + j, color));
       }
-      rows.push(<div className="board-row" key={"row" + i}>{squares}</div>);
+      rows.push(<tr className="board-row" key={"row" + i}>{squares}</tr>);
     }
 
-    return <div>{rows}</div>;
+    return <table className="mx-auto text-center"><tbody>{rows}</tbody></table>;
   }
 }
 
@@ -151,9 +153,9 @@ class Game extends React.Component {
       // current move is bold
       let btn;
       if (move === this.state.stepNumber) {
-        btn = <button onClick={() => this.jumpTo(move)}><b>{desc}</b></button>;
+        btn = <button className="btn btn-primary" onClick={() => this.jumpTo(move)}>{desc}</button>;
       } else {
-        btn = <button onClick={() => this.jumpTo(move)}>{desc}</button>;
+        btn = <button className="btn btn-secondary" onClick={() => this.jumpTo(move)}>{desc}</button>;
       }
 
       return <li key={move}>{btn}</li>
@@ -170,21 +172,20 @@ class Game extends React.Component {
     }
 
     return (
-      <div className="game">
-        <div className="game-board">
+      <div className="game row">
+        <div className="game-board col-xl-8 col-lg-8 col-md-7 col-sm-12 col-xs-12 col-12">
           <Board
             squares={current.squares}
             win={this.state.win}
             onClick={(i) => this.handleClick(i)}
           />
-          <br />
-          <button onClick={() => this.setState({reverseHistory: !this.state.reverseHistory})}>
+          <div className="status display-4">{status}</div>
+          <button className="btn btn-primary reverse-btn" onClick={() => this.setState({reverseHistory: !this.state.reverseHistory})}>
             Reverse history order
           </button>
         </div>
-        <div className="game-info">
-          <div>{status}</div>
-          <ol>{moves}</ol>
+        <div className="game-info col-xl-4 col-lg-4 col-md-5 col-sm-12 col-xs-12 col-12">
+          <div className="moves mx-auto text-justify lead"><ol>{moves}</ol></div>
         </div>
       </div>
     );

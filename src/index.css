@@ -1,6 +1,6 @@
 body {
-  font: 14px "Century Gothic", Futura, sans-serif;
   margin: 20px;
+  background-color: rgb(55, 74, 173);
 }
 
 ol, ul {
@@ -19,7 +19,7 @@ ol, ul {
 
 .square {
   background: #fff;
-  border: 1px solid #999;
+  border: 1px solid rgb(55, 74, 173);
   float: left;
   font-size: 24px;
   font-weight: bold;
@@ -40,15 +40,44 @@ ol, ul {
   background: #ddd;
 }
 
-.game {
-  display: flex;
-  flex-direction: row;
-}
-
-.game-info {
-  margin-left: 20px;
-}
-
 .win {
-  background-color: rgba(200, 0, 0, 0.4);
+  color: rgba(200, 0, 0, 0.8);
+}
+
+.game {
+  width: 100%;
+  margin: auto;
+  text-align: center;
+}
+
+.board-row button {
+  min-width: 100px;
+  min-height: 100px;
+  font-size: 50pt;
+  background-color: rgb(92, 120, 217);
+}
+
+.game-board {
+  margin-bottom: 20px;
+}
+
+.status {
+  margin: 10px 0 20px 0;
+}
+
+.reverse-btn {
+  margin-bottom: 10px;
+}
+
+.moves {
+  width: 100%;
+}
+
+ol {
+  list-style-position: inside;
+  text-align: left;
+}
+
+li {
+  margin: 10px 0 10px 0;
 }
