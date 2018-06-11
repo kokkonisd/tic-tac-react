@@ -187,7 +187,11 @@ class Game extends React.Component {
         <div className="game-info col-xl-4 col-lg-4 col-md-5 col-sm-12 col-xs-12 col-12">
           <div className="moves mx-auto text-justify lead"><ol>{moves}</ol></div>
         </div>
+        <div className="text-center mx-auto signature">
+          made by <a className="name" href="https://github.com/kokkonisd">kokkonisd</a> using <a className="source" href="https://reactjs.org/">react.js</a>
+        </div>
       </div>
+
     );
   }
 }
